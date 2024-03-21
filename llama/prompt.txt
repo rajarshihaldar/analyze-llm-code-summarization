@@ -1,0 +1,130 @@
+Pretend that you are a programmer writing Python functions. For a given Python function you have to generate a short documentation describing what the function does.
+Example 1:
+Code:
+def split_phylogeny(p, level="s"):
+    
+    level = level+"__"
+    result = p.split(level)
+    return result[0]+level+result[1].split(";")[0]
+Documentation:
+Return either the full or truncated version of a QIIME-formatted taxonomy string.
+
+Example 2:
+Code:
+def ensure_dir(d):
+    
+    if not os.path.exists(d):
+        try:
+            os.makedirs(d)
+        except OSError as oe:
+            # should not happen with os.makedirs
+            # ENOENT: No such file or directory
+            if os.errno == errno.ENOENT:
+                msg = twdd("""One or more directories in the path ({}) do not exist. If
+                           you are specifying a new directory for output, please ensure
+                           all other directories in the path currently exist.""")
+                return msg.format(d)
+            else:
+                msg = twdd("""An error occurred trying to create the output directory
+                           ({}) with message: {}""")
+                return msg.format(d, oe.strerror)
+Documentation:
+Check to make sure the supplied directory path does not exist, if so, create it. The method catches OSError exceptions and returns a descriptive message instead of re-raising the error.
+
+Example 3:
+Code:
+def file_handle(fnh, mode="rU"):
+    
+    handle = None
+    if isinstance(fnh, file):
+        if fnh.closed:
+            raise ValueError("Input file is closed.")
+        handle = fnh
+    elif isinstance(fnh, str):
+        handle = open(fnh, mode)
+
+    return handle
+Documentation:
+Takes either a file path or an open file handle, checks validity and returns an open file handle or raises an appropriate Exception.
+
+Example 4:
+Code:
+def gather_categories(imap, header, categories=None):
+    
+    # If no categories provided, return all SampleIDs
+    if categories is None:
+        return {"default": DataCategory(set(imap.keys()), {})}
+
+    cat_ids = [header.index(cat)
+               for cat in categories if cat in header and "=" not in cat]
+
+    table = OrderedDict()
+    conditions = defaultdict(set)
+    for i, cat in enumerate(categories):
+        if "=" in cat and cat.split("=")[0] in header:
+            cat_name = header[header.index(cat.split("=")[0])]
+            conditions[cat_name].add(cat.split("=")[1])
+
+    # If invalid categories or conditions identified, return all SampleIDs
+    if not cat_ids and not conditions:
+        return {"default": DataCategory(set(imap.keys()), {})}
+
+    #If only category column given, return column-wise SampleIDs
+    if cat_ids and not conditions:
+        for sid, row in imap.items():
+            cat_name = "_".join([row[cid] for cid in cat_ids])
+            if cat_name not in table:
+                table[cat_name] = DataCategory(set(), {})
+            table[cat_name].sids.add(sid)
+        return table
+
+    # Collect all condition names
+    cond_ids = set()
+    for k in conditions:
+        try:
+            cond_ids.add(header.index(k))
+        except ValueError:
+            continue
+    idx_to_test = set(cat_ids).union(cond_ids)
+
+    # If column name and condition given, return overlapping SampleIDs of column and
+    # condition combinations
+    for sid, row in imap.items():
+        if all([row[header.index(c)] in conditions[c] for c in conditions]):
+            key = "_".join([row[idx] for idx in idx_to_test])
+            try:
+                assert key in table.keys()
+            except AssertionError:
+                table[key] = DataCategory(set(), {})
+            table[key].sids.add(sid)
+    try:
+        assert len(table) > 0
+    except AssertionError:
+        return {"default": DataCategory(set(imap.keys()), {})}
+    else:
+        return table
+Documentation:
+Find the user specified categories in the map and create a dictionary to contain the relevant data for each type within the categories. Multiple categories will have their types combined such that each possible combination will have its own entry in the dictionary.
+
+Example 5:
+Code:
+def parse_unifrac(unifracFN):
+    
+    with open(unifracFN, "rU") as uF:
+        first = uF.next().split("\t")
+        lines = [line.strip() for line in uF]
+
+    unifrac = {"pcd": OrderedDict(), "eigvals": [], "varexp": []}
+    if first[0] == "pc vector number":
+        return parse_unifrac_v1_8(unifrac, lines)
+    elif first[0] == "Eigvals":
+        return parse_unifrac_v1_9(unifrac, lines)
+    else:
+        raise ValueError("File format not supported/recognized. Please check input "
+                         "unifrac file.")
+Documentation:
+Parses the unifrac results file into a dictionary
+
+Now you are given the following Python function:
+
+Code:

@@ -1,0 +1,12 @@
+bitsandbytes==0.41.1
+google-generativeai==0.1.0
+matplotlib==3.7.2
+nltk==3.8.1
+numpy==1.25.2
+openai==0.27.8
+pandas==2.0.3
+PyYAML==6.0.1
+scipy==1.11.1
+torch==2.0.1
+tqdm==4.65.0
+transformers @ git+https://github.com/huggingface/transformers@50573c648ae953dcc1b94d663651f07fb02268f4
