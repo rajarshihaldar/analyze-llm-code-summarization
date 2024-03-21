@@ -46,7 +46,7 @@ set_seed(args)
 model_size = args.parameters
 load_quantized = True
 
-cache_dir = '/scratch/rhaldar2/huggingface/'
+cache_dir = './'
 if args.mtype == 'llama2':
     pretrained_model = f'meta-llama/Llama-2-{model_size}-chat-hf'
 else:

@@ -61,12 +61,13 @@ def compute_bleu(cfg):
     gens = []
 
     for data in tqdm(reference):
-        toks = get_tokens(tokenizer, data)
-        # toks = data.split()
+        ## Note: Using get_tokens inflates scores since it relaxes conditions for a match between tokens
+        # toks = get_tokens(tokenizer, data)
+        toks = data.split()
         refs.append([toks])
     for data in tqdm(generated):
-        toks = get_tokens(tokenizer, data)
-        # toks = data.split()
+        # toks = get_tokens(tokenizer, data)
+        toks = data.split()
         gens.append(toks)
 
     max_order = 4

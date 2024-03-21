@@ -52,16 +52,6 @@ def compute_bleu(cfg):
         fname = f'results/remove_keyword_{args.mtype}_{model_size}.csv'
     if only_func:
         fname = f'results/no_body_{args.mtype}_{model_size}.csv'
-
-    # fname = f'results/original_{model_size}.csv'
-    # if remove_func:
-    #     fname = f'results/obfusc_{model_size}.csv'
-    # if adversarial_func:
-    #     fname = f'results/advers_{model_size}.csv'
-    # if remove_keyword:
-    #     fname = f'results/remove_keyword_{model_size}.csv'
-    # if only_func:
-    #     fname = f'results/no_body_{model_size}.csv'
     
     print(f"Variant = {fname}")
     results = pd.read_csv(fname)
@@ -74,6 +64,7 @@ def compute_bleu(cfg):
     gens = []
 
     for data in tqdm(reference):
+        ## Note: Using get_tokens inflates scores since it relaxes conditions for a match between tokens
         # toks = get_tokens(tokenizer, data)
         toks = data.split()
         refs.append([toks])

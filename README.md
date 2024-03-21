@@ -11,6 +11,7 @@ python inference.py
 
 Then compute BLEU score.
 ```
+python postprocess.py
 python eval.py
 ```
 

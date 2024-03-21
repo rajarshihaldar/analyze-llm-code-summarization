@@ -89,7 +89,7 @@ def main(cfg):
 
     model = CodeT5Summ(gpu_id=gpu_id)
     print(get_n_params(model.model))
-    exit()
+    
     # train_dataset = [model.tokenizer.cls_token+c+model.tokenizer.sep_token+d+model.tokenizer.sep_token for c, d in train_dataset]
 
     model.train()
